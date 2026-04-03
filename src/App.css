@@ -123,3 +123,59 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.context-menu {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  list-style: none;
+  padding: 0.25rem 0;
+  z-index: 1000;
+  min-width: 180px;
+}
+.context-menu li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.context-menu li:hover { background: var(--color-bg); }
+
+.word-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  background: var(--color-surface);
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.cell--selected {
+  border-color: var(--color-primary);
+  background: var(--color-selected);
+}
+
+.cell--flagged {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.cell--flagged.cell--selected {
+  background: #f87171;
+  border-color: var(--color-primary);
+}

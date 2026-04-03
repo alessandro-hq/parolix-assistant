@@ -2,6 +2,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useDictionary } from './hooks/useDictionary'
 import { filterWords } from './utils/filter'
+import WordGrid from './components/WordGrid'
+import ContextMenu from './components/ContextMenu'
 import './App.css'
 
 export default function App() {
@@ -111,6 +113,46 @@ export default function App() {
     setResults([...filtered].sort())
   }
 
+  function handleCellClick(index, e) {
+    setActiveInput('grid')
+    setContextMenu(null)
+    if (e.shiftKey && selectedIndices.size > 0) {
+      // Range select: from the first selected to the clicked index
+      const first = Math.min(...selectedIndices)
+      const last = index
+      const [lo, hi] = [Math.min(first, last), Math.max(first, last)]
+      const range = new Set()
+      for (let i = lo; i <= hi; i++) range.add(i)
+      setSelectedIndices(range)
+    } else {
+      setSelectedIndices(new Set([index]))
+    }
+  }
+
+  function handleContextMenu(index, e) {
+    // Only show menu if cell has a letter
+    if (!cells[index].letter) return
+    setContextMenu({ index, x: e.clientX, y: e.clientY })
+  }
+
+  function handleFlag(index) {
+    setCells(prev => {
+      const next = [...prev]
+      next[index] = { ...next[index], flagged: true }
+      return next
+    })
+    setContextMenu(null)
+  }
+
+  function handleUnflag(index) {
+    setCells(prev => {
+      const next = [...prev]
+      next[index] = { ...next[index], flagged: false }
+      return next
+    })
+    setContextMenu(null)
+  }
+
   if (loading) return <div className="loading">Caricamento dizionario...</div>
   if (error) return <div className="error">Errore: {error}</div>
 
@@ -136,30 +178,45 @@ export default function App() {
     )
   }
 
-  // Main UI — components are placeholders until Tasks 5-8
+  // Main UI — components are placeholders until Tasks 6-8
   return (
-    <div className="app-layout" onClick={() => setContextMenu(null)}>
-      <header className="app-header">
-        <h1>Assistente Parolix</h1>
-      </header>
-      <div className="main-columns">
-        <div className="left-panel">
-          {/* WordGrid — Task 5 */}
-          <div>[WordGrid placeholder]</div>
-          {/* AbsentLetters — Task 6 */}
-          <div>[AbsentLetters placeholder]</div>
-          {/* Keyboard — Task 7 */}
-          <div>[Keyboard placeholder]</div>
-          <div className="action-buttons">
-            <button className="btn-primary" onClick={handleSearch}>Cerca</button>
-            <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>
+    <>
+      <div className="app-layout" onClick={() => setContextMenu(null)}>
+        <header className="app-header">
+          <h1>Assistente Parolix</h1>
+        </header>
+        <div className="main-columns">
+          <div className="left-panel">
+            <WordGrid
+              cells={cells}
+              selectedIndices={selectedIndices}
+              onCellClick={handleCellClick}
+              onContextMenu={handleContextMenu}
+            />
+            {/* AbsentLetters — Task 6 */}
+            <div>[AbsentLetters placeholder]</div>
+            {/* Keyboard — Task 7 */}
+            <div>[Keyboard placeholder]</div>
+            <div className="action-buttons">
+              <button className="btn-primary" onClick={handleSearch}>Cerca</button>
+              <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>
+            </div>
+          </div>
+          <div className="right-panel">
+            {/* Results — Task 8 */}
+            <div>[Results placeholder]</div>
           </div>
         </div>
-        <div className="right-panel">
-          {/* Results — Task 8 */}
-          <div>[Results placeholder]</div>
-        </div>
       </div>
-    </div>
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          isFlagged={cells[contextMenu.index]?.flagged}
+          onFlag={() => handleFlag(contextMenu.index)}
+          onUnflag={() => handleUnflag(contextMenu.index)}
+        />
+      )}
+    </>
   )
 }
