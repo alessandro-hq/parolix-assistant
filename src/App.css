@@ -10,7 +10,7 @@
   --color-text: #111827;
   --color-muted: #6b7280;
   --radius: 6px;
-  --cell-size: 52px;
+  --cell-size: 72px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -209,7 +209,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
   cursor: pointer;
   user-select: none;
