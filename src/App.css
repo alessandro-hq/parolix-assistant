@@ -122,6 +122,9 @@ body {
   .main-columns {
     grid-template-columns: 1fr;
   }
+  .right-panel {
+    max-height: 400px;
+  }
 }
 
 .context-menu {

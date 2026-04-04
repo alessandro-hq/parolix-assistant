@@ -197,7 +197,14 @@ export default function App() {
   // Main UI — components are placeholders until Tasks 6-8
   return (
     <>
-      <div className="app-layout" onClick={() => setContextMenu(null)}>
+      <div
+        className="app-layout"
+        onClick={() => {
+          setContextMenu(null)
+          setSelectedIndices(new Set())
+          setActiveInput('grid')
+        }}
+      >
         <header className="app-header">
           <h1>Assistente Parolix</h1>
         </header>
