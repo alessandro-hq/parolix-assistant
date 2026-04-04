@@ -4,6 +4,9 @@ import { useDictionary } from './hooks/useDictionary'
 import { filterWords } from './utils/filter'
 import WordGrid from './components/WordGrid'
 import ContextMenu from './components/ContextMenu'
+import AbsentLetters from './components/AbsentLetters'
+import Keyboard from './components/Keyboard'
+import Results from './components/Results'
 import './App.css'
 
 export default function App() {
@@ -153,6 +156,19 @@ export default function App() {
     setContextMenu(null)
   }
 
+  function handleRemoveAbsent(letter) {
+    setAbsentLetters(prev => {
+      const next = new Set(prev)
+      next.delete(letter)
+      return next
+    })
+  }
+
+  function handleActivateAbsent() {
+    setActiveInput('absent')
+    setSelectedIndices(new Set())
+  }
+
   if (loading) return <div className="loading">Caricamento dizionario...</div>
   if (error) return <div className="error">Errore: {error}</div>
 
@@ -193,18 +209,20 @@ export default function App() {
               onCellClick={handleCellClick}
               onContextMenu={handleContextMenu}
             />
-            {/* AbsentLetters — Task 6 */}
-            <div>[AbsentLetters placeholder]</div>
-            {/* Keyboard — Task 7 */}
-            <div>[Keyboard placeholder]</div>
+            <AbsentLetters
+              letters={absentLetters}
+              isActive={activeInput === 'absent'}
+              onActivate={handleActivateAbsent}
+              onRemove={handleRemoveAbsent}
+            />
+            <Keyboard onKey={handleKey} onBackspace={handleBackspace} />
             <div className="action-buttons">
               <button className="btn-primary" onClick={handleSearch}>Cerca</button>
               <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>
             </div>
           </div>
           <div className="right-panel">
-            {/* Results — Task 8 */}
-            <div>[Results placeholder]</div>
+            <Results results={results} />
           </div>
         </div>
       </div>
