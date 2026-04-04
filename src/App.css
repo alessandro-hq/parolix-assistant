@@ -18,8 +18,9 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Calibri', 'Carlito', sans-serif;
   font-size: 16px;
+  font-weight: 400;
 }
 
 /* Setup screen */
@@ -77,7 +78,7 @@ body {
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
-.app-header h1 { font-size: 1.5rem; font-weight: 700; }
+.app-header h1 { font-size: 1.5rem; font-weight: 400; }
 
 .main-columns {
   display: grid;
@@ -207,7 +208,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: clamp(0.75rem, 2vw, 1.5rem);
-  font-weight: 700;
+  font-weight: 400;
   cursor: pointer;
   user-select: none;
   background: var(--color-surface);
@@ -263,7 +264,7 @@ body {
   border-radius: 999px;
   padding: 0.2rem 0.6rem;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .chip-remove {
@@ -298,7 +299,7 @@ body {
   border-radius: 4px;
   background: var(--color-surface);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -321,7 +322,7 @@ body {
 
 .results-header {
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: 400;
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
