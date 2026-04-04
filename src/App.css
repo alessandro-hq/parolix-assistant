@@ -81,18 +81,20 @@ body {
 .main-columns {
   display: grid;
   grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr;
   gap: 1.5rem;
   padding: 1.5rem;
   flex: 1;
+  align-items: stretch;
 }
 
 .left-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  justify-content: space-between;
   background: var(--color-surface);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 2rem;
   border: 1px solid var(--color-border);
 }
 
