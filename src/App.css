@@ -119,11 +119,59 @@ body {
 
 /* Responsive */
 @media (max-width: 767px) {
+  :root {
+    --cell-size: 38px;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
   .main-columns {
     grid-template-columns: 1fr;
+    padding: 0.5rem;
+    gap: 0.75rem;
   }
+
+  .left-panel {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
   .right-panel {
-    max-height: 400px;
+    max-height: 50vh;
+    padding: 0.75rem;
+  }
+
+  .keyboard {
+    width: 100%;
+    gap: 4px;
+  }
+
+  .keyboard-row {
+    width: 100%;
+    gap: 3px;
+  }
+
+  .key {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    height: 36px;
+    font-size: 0.75rem;
+  }
+
+  .key--backspace {
+    flex: 1.5;
+    width: auto;
+  }
+
+  .app-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.25rem;
   }
 }
 
