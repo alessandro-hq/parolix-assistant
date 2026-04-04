@@ -183,7 +183,7 @@ export default function App() {
             onActivate={handleActivateAbsent}
             onRemove={handleRemoveAbsent}
           />
-          <Keyboard onKey={handleKey} onBackspace={handleBackspace} />
+          <Keyboard onKey={handleKey} onBackspace={handleBackspace} cells={cells} absentLetters={absentLetters} />
           <div className="action-buttons">
             <button className="btn-primary" onClick={handleSearch}>Cerca</button>
             <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>

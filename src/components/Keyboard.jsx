@@ -5,13 +5,23 @@ const ROWS = [
   ['S','T','U','V','W','X','Y','Z','⌫'],
 ]
 
-export default function Keyboard({ onKey, onBackspace }) {
+export default function Keyboard({ onKey, onBackspace, cells, absentLetters }) {
+  const placedLetters = new Set(cells.map(c => c.letter.toUpperCase()).filter(Boolean))
+
   function handleClick(key) {
     if (key === '⌫') {
       onBackspace()
     } else {
       onKey(key)
     }
+  }
+
+  function keyClass(key) {
+    if (key === '⌫') return 'key key--backspace'
+    const l = key.toUpperCase()
+    if (absentLetters.has(l.toLowerCase())) return 'key key--absent'
+    if (placedLetters.has(l)) return 'key key--placed'
+    return 'key'
   }
 
   return (
@@ -21,7 +31,7 @@ export default function Keyboard({ onKey, onBackspace }) {
           {row.map(key => (
             <button
               key={key}
-              className={`key${key === '⌫' ? ' key--backspace' : ''}`}
+              className={keyClass(key)}
               onClick={() => handleClick(key)}
             >
               {key}
