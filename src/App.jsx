@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from 'react'
 import { useDictionary } from './hooks/useDictionary'
 import { filterWords } from './utils/filter'
 import WordGrid from './components/WordGrid'
-import ContextMenu from './components/ContextMenu'
 import AbsentLetters from './components/AbsentLetters'
 import Keyboard from './components/Keyboard'
 import Results from './components/Results'
@@ -18,18 +17,16 @@ export default function App() {
   const [absentLetters, setAbsentLetters] = useState(new Set())
   const [activeInput, setActiveInput] = useState('grid')
   const [results, setResults] = useState(null)
-  const [contextMenu, setContextMenu] = useState(null)
 
   // Confirm word length and initialise cells
   function handleConfirmLength() {
     const n = parseInt(lengthInput, 10)
     if (isNaN(n) || n < 2 || n > 26) return
     setWordLength(n)
-    setCells(Array.from({ length: n }, () => ({ letter: '', flagged: false })))
+    setCells(Array.from({ length: n }, () => ({ letter: '' })))
     setSelectedIndices(new Set())
     setAbsentLetters(new Set())
     setResults(null)
-    setContextMenu(null)
     setActiveInput('grid')
   }
 
@@ -41,7 +38,6 @@ export default function App() {
     setSelectedIndices(new Set())
     setAbsentLetters(new Set())
     setResults(null)
-    setContextMenu(null)
     setActiveInput('grid')
   }
 
@@ -56,7 +52,7 @@ export default function App() {
     setCells(prev => {
       const next = [...prev]
       for (const i of selectedIndices) {
-        next[i] = { ...next[i], letter: letter.toLowerCase() }
+        next[i] = { letter: letter.toLowerCase() }
       }
       return next
     })
@@ -67,7 +63,7 @@ export default function App() {
       setCells(prev => {
         const next = [...prev]
         for (const i of selectedIndices) {
-          next[i] = { letter: '', flagged: false }
+          next[i] = { letter: '' }
         }
         return next
       })
@@ -91,31 +87,14 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [wordLength, handleKey, handleBackspace])
 
-  // Close context menu on outside click
-  useEffect(() => {
-    function onClick() { setContextMenu(null) }
-    window.addEventListener('click', onClick)
-    return () => window.removeEventListener('click', onClick)
-  }, [])
-
-  // Suppress native browser context menu on cells (React 19 e.preventDefault() not reliable on divs)
-  useEffect(() => {
-    function preventNativeContextMenu(e) {
-      if (e.target.closest('.cell')) {
-        e.preventDefault()
-      }
-    }
-    document.addEventListener('contextmenu', preventNativeContextMenu)
-    return () => document.removeEventListener('contextmenu', preventNativeContextMenu)
-  }, [])
-
+  // Search: all placed letters are automatically excluded from other positions
   function handleSearch() {
     const knownLetters = {}
     const flaggedLetters = new Set()
     cells.forEach((cell, i) => {
       if (cell.letter) {
         knownLetters[i] = cell.letter
-        if (cell.flagged) flaggedLetters.add(cell.letter)
+        flaggedLetters.add(cell.letter)
       }
     })
     const filtered = filterWords(words, {
@@ -129,9 +108,7 @@ export default function App() {
 
   function handleCellClick(index, e) {
     setActiveInput('grid')
-    setContextMenu(null)
     if (e.shiftKey && selectedIndices.size > 0) {
-      // Range select: from the first selected to the clicked index
       const first = Math.min(...selectedIndices)
       const last = index
       const [lo, hi] = [Math.min(first, last), Math.max(first, last)]
@@ -141,30 +118,6 @@ export default function App() {
     } else {
       setSelectedIndices(new Set([index]))
     }
-  }
-
-  function handleContextMenu(index, e) {
-    // Only show menu if cell has a letter
-    if (!cells[index].letter) return
-    setContextMenu({ index, x: e.clientX, y: e.clientY })
-  }
-
-  function handleFlag(index) {
-    setCells(prev => {
-      const next = [...prev]
-      next[index] = { ...next[index], flagged: true }
-      return next
-    })
-    setContextMenu(null)
-  }
-
-  function handleUnflag(index) {
-    setCells(prev => {
-      const next = [...prev]
-      next[index] = { ...next[index], flagged: false }
-      return next
-    })
-    setContextMenu(null)
   }
 
   function handleRemoveAbsent(letter) {
@@ -207,52 +160,39 @@ export default function App() {
 
   // Main UI
   return (
-    <>
-      <div
-        className="app-layout"
-        onClick={() => {
-          setContextMenu(null)
-          setSelectedIndices(new Set())
-          setActiveInput('grid')
-        }}
-      >
-        <header className="app-header">
-          <h1>Assistente Parolix</h1>
-        </header>
-        <div className="main-columns">
-          <div className="left-panel">
-            <WordGrid
-              cells={cells}
-              selectedIndices={selectedIndices}
-              onCellClick={handleCellClick}
-              onContextMenu={handleContextMenu}
-            />
-            <AbsentLetters
-              letters={absentLetters}
-              isActive={activeInput === 'absent'}
-              onActivate={handleActivateAbsent}
-              onRemove={handleRemoveAbsent}
-            />
-            <Keyboard onKey={handleKey} onBackspace={handleBackspace} />
-            <div className="action-buttons">
-              <button className="btn-primary" onClick={handleSearch}>Cerca</button>
-              <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>
-            </div>
-          </div>
-          <div className="right-panel">
-            <Results results={results} />
+    <div
+      className="app-layout"
+      onClick={() => {
+        setSelectedIndices(new Set())
+        setActiveInput('grid')
+      }}
+    >
+      <header className="app-header">
+        <h1>Assistente Parolix</h1>
+      </header>
+      <div className="main-columns">
+        <div className="left-panel">
+          <WordGrid
+            cells={cells}
+            selectedIndices={selectedIndices}
+            onCellClick={handleCellClick}
+          />
+          <AbsentLetters
+            letters={absentLetters}
+            isActive={activeInput === 'absent'}
+            onActivate={handleActivateAbsent}
+            onRemove={handleRemoveAbsent}
+          />
+          <Keyboard onKey={handleKey} onBackspace={handleBackspace} />
+          <div className="action-buttons">
+            <button className="btn-primary" onClick={handleSearch}>Cerca</button>
+            <button className="btn-secondary" onClick={handleReset}>Ricomincia</button>
           </div>
         </div>
+        <div className="right-panel">
+          <Results results={results} />
+        </div>
       </div>
-      {contextMenu && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          isFlagged={cells[contextMenu.index]?.flagged}
-          onFlag={() => handleFlag(contextMenu.index)}
-          onUnflag={() => handleUnflag(contextMenu.index)}
-        />
-      )}
-    </>
+    </div>
   )
 }
