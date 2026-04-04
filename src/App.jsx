@@ -194,7 +194,7 @@ export default function App() {
     )
   }
 
-  // Main UI — components are placeholders until Tasks 6-8
+  // Main UI
   return (
     <>
       <div
