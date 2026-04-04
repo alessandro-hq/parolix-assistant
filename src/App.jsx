@@ -98,6 +98,17 @@ export default function App() {
     return () => window.removeEventListener('click', onClick)
   }, [])
 
+  // Suppress native browser context menu on cells (React 19 e.preventDefault() not reliable on divs)
+  useEffect(() => {
+    function preventNativeContextMenu(e) {
+      if (e.target.closest('.cell')) {
+        e.preventDefault()
+      }
+    }
+    document.addEventListener('contextmenu', preventNativeContextMenu)
+    return () => document.removeEventListener('contextmenu', preventNativeContextMenu)
+  }, [])
+
   function handleSearch() {
     const knownLetters = {}
     const flaggedLetters = new Set()
