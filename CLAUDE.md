@@ -82,6 +82,14 @@ Leggi `../DEPLOYMENT.md` per stack e istruzioni di deploy.
 - Nessun `font-weight` superiore a 400 usato nell'app
 - Non usare Calibri: è un font Microsoft, non disponibile su Mac/iOS/Android senza Office
 
+### Cose che avrebbero dovuto essere catchate prima
+
+- **React 19 synthetic events** — il problema con `contextmenu` (right-click non funzionante su div) è una limitazione nota di React 19. Avrebbe dovuto essere segnalata in fase di planning, non scoperta dopo aver già costruito il feature.
+- **`font-family: monospace` sui risultati** — un residuo del primo sviluppo rimasto inosservato finché l'utente non l'ha notato visivamente. Un visual review pass dopo il deploy avrebbe caught questo immediatamente.
+- **CSS orfano (`.context-menu`)** — rimasto nel codebase per diverse sessioni dopo la cancellazione del componente. Va rimosso nello stesso commit in cui si cancella il componente.
+- **Font Calibri** — proposto senza verificare la disponibilità cross-platform. Calibri non è disponibile su Mac/iOS/Android senza Microsoft Office. Verificare sempre se un font è un system font o un web font prima di proporlo.
+- **Overflow mobile su iPhone 12** — scoperto solo quando l'utente ha testato sul dispositivo reale. Il test mobile dovrebbe essere parte della definizione di "done".
+
 ### Decisioni di design notevoli
 - Nessun menu contestuale — rimosso perché inaffidabile su React 19 (synthetic events non chiamano `preventDefault` su div)
 - Le lettere piazzate vengono auto-escluse da altre posizioni (flaggedLetters) senza input manuale
