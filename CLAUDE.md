@@ -36,6 +36,8 @@ Leggi `../DEPLOYMENT.md` per stack e istruzioni di deploy.
 
 ### Griglia parola
 - L'utente inserisce il numero di lettere al setup (2–26)
+- Celle sempre su una singola riga (nowrap), si scalano proporzionalmente fino a 20 lettere
+- Font size celle usa `clamp()` per scalare su parole lunghe
 - Celle cliccabili; shift+click seleziona un range
 - Click su cella attiva input da tastiera per quella posizione
 - Click su sfondo deseleziona tutto
@@ -47,13 +49,16 @@ Leggi `../DEPLOYMENT.md` per stack e istruzioni di deploy.
 - **flaggedLetters**: lettere che devono comparire SOLO nelle posizioni confermate — auto-calcolate da tutte le lettere piazzate nella griglia. Se una lettera è piazzata, non può comparire in altre posizioni della parola.
 
 ### Tastiera virtuale (`src/components/Keyboard.jsx`)
-- Layout alfabetico A–Z (3 righe da 9), backspace in fondo a destra
+- Layout alfabetico A–Z in 2 righe: A–M sopra, N–Z + ⌫ sotto
 - Tasti `flex: 1` — si adattano a qualsiasi larghezza schermo
-- **Colori stato lettere**:
-  - Grigio: lettera inserita nella griglia
-  - Rosso: lettera marcata come assente
-  - Si aggiorna in tempo reale ad ogni interazione
+- **Colori stato lettere** (si aggiornano in tempo reale):
+  - Grigio (`key--placed`): lettera inserita nella griglia
+  - Rosso (`key--absent`): lettera marcata come assente
+  - Assente ha priorità su piazzata se entrambe presenti
 - Tastiera fisica supportata tramite `keydown` listener
+
+### Pulsanti azione
+- Ordine: **Ricomincia** (sinistra, secondario) — **Cerca** (destra, primario)
 
 ### Lettere assenti (`src/components/AbsentLetters.jsx`)
 - Click sul pannello "Assenti" attiva input per quelle lettere
@@ -63,16 +68,21 @@ Leggi `../DEPLOYMENT.md` per stack e istruzioni di deploy.
 ### Risultati (`src/components/Results.jsx`)
 - Lista ordinata alfabeticamente
 - Mostra conteggio parole trovate
-- Pannello destro scrollabile indipendentemente
+- Nessun override font — usa DM Sans come tutto il resto
 
 ### Layout
 - Desktop: 2fr (sinistra interattiva) + 1fr (risultati destra)
-- Pannello sinistro fisso — non scrolla mai
+- Pannello sinistro fisso — non scrolla mai (`height: 100vh; overflow: hidden` su `.app-layout`)
 - Solo il pannello destro con i risultati scrolla
-- Mobile (≤767px): colonna singola, tutto naturalmente scrollabile
-- Font: DM Sans (Google Fonts)
+- Mobile (≤767px): colonna singola, tutto naturalmente scrollabile, `app-layout` torna a `height: auto`
+
+### Font
+- **DM Sans** peso 400 (regular) caricato da Google Fonts — identico su tutti i dispositivi e OS
+- Un solo peso importato (`wght@400`) per velocità di caricamento
+- Nessun `font-weight` superiore a 400 usato nell'app
+- Non usare Calibri: è un font Microsoft, non disponibile su Mac/iOS/Android senza Office
 
 ### Decisioni di design notevoli
-- Nessun menu contestuale — rimosso perché inaffidabile su React 19
-- Le lettere piazzate vengono auto-escluse da altre posizioni (flaggedLetters) senza bisogno di input manuale dall'utente
-- `height: 100vh; overflow: hidden` su `.app-layout` per fissare il pannello sinistro su desktop
+- Nessun menu contestuale — rimosso perché inaffidabile su React 19 (synthetic events non chiamano `preventDefault` su div)
+- Le lettere piazzate vengono auto-escluse da altre posizioni (flaggedLetters) senza input manuale
+- Il risultato `.results-item` non ha `font-family: monospace` — era un override che nascondeva DM Sans
